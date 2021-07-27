@@ -4,13 +4,15 @@ using UnityEngine;
 
 public static class VoxelData
 {
-    public static readonly int chunkWidth = 5;
-    public static readonly int chunkHeight = 15;
+    public static readonly int chunkWidth = 16;
+    public static readonly int chunkHeight = 128;
     
-    public static readonly int worldSizeInChunks = 5;
+    public static readonly int worldSizeInChunks = 10;
     public static int worldSizeInVoxels {
         get {return worldSizeInChunks * chunkWidth; }
     }
+
+    public static readonly int viewDistanceInChunks = 5;
 
     public static readonly int textureAtlasSizeInBlocks = 4;
     // Valor que varia entre 0.0f e 1.0f dependendo do size da textura em cima. Se for 4 é 0.25f

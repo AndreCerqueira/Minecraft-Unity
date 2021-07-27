@@ -74,7 +74,8 @@ public class Chunk
             for (int x = 0; x < VoxelData.chunkWidth; x++) {
                 for (int z = 0; z < VoxelData.chunkWidth; z++) {
 
-                    addVoxelDataToChunk(new Vector3(x, y, z));
+                    if (world.blockTypes[VoxelMap[x, y, z]].isSolid)
+                        addVoxelDataToChunk(new Vector3(x, y, z));
 
                 }
             }
@@ -107,7 +108,7 @@ public class Chunk
     */
     bool IsVoxelInChunk(int x, int y, int z) 
     {
-        if (x < 0 || x > VoxelData.chunkWidth - 1 || y < 0 || y > VoxelData.chunkHeight - 1 || z < 0 || z > VoxelData.chunkWidth - 1 )
+        if (x < 0 || x > VoxelData.chunkWidth - 1 || y < 0 || y > VoxelData.chunkHeight - 1 || z < 0 || z > VoxelData.chunkWidth - 1)
             return false;
         else
             return true;
@@ -115,7 +116,7 @@ public class Chunk
 
 
     /*
-        Esta função é responsavel por retornar a variavel bool de uma determinada posiçao de um voxel
+        Esta função é responsavel por retornar ????
     */
     bool checkVoxel(Vector3 pos) 
     {
@@ -222,6 +223,16 @@ public class ChunkCoord
     {
         x = _x;
         z = _z;
+    }
+
+    public bool Equals (ChunkCoord other)
+    {
+        if (other == null)
+            return false;
+        else if (other.x == x && other.z == z)
+            return true;
+        else 
+            return false;
     }
 
 }
