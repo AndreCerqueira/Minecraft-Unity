@@ -25,7 +25,7 @@ public class World : MonoBehaviour
 
         spawnPosition = new Vector3(
             (VoxelData.worldSizeInChunks * VoxelData.chunkWidth) / 2f, 
-            VoxelData.chunkHeight + 2f, 
+            VoxelData.chunkHeight - 50f, 
             (VoxelData.worldSizeInChunks * VoxelData.chunkWidth) / 2f
         );
 
@@ -104,6 +104,22 @@ public class World : MonoBehaviour
         foreach (ChunkCoord c in previouslyActiveChunks)
             chunks[c.x, c.z].isActive = false;
 
+    }
+
+    
+    public bool checkForVoxel(float _x, float _y, float _z)
+    {
+        int xCheck = Mathf.FloorToInt(_x);
+        int yCheck = Mathf.FloorToInt(_y);
+        int zCheck = Mathf.FloorToInt(_z);
+
+        int xChunk = xCheck / VoxelData.chunkWidth;
+        int zChunk = zCheck / VoxelData.chunkWidth;
+
+        xCheck -= (xChunk * VoxelData.chunkWidth);
+        zCheck -= (zChunk * VoxelData.chunkWidth);
+
+        return blockTypes[chunks[xChunk, zChunk].VoxelMap[xCheck, yCheck, zCheck]].isSolid;
     }
 
 
