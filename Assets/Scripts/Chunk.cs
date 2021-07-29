@@ -20,6 +20,8 @@ public class Chunk
 
     World world;
 
+    private bool _isActive;
+    public bool isVoxelMapPopulated;
 
     /*
         Construtor do chunk
@@ -27,10 +29,18 @@ public class Chunk
         é criado um gameobject vazio. atribuido um mesh filter e renderer
         definido o material, a posição do chunk já vem definida e aqui é atribuida.
     */
-    public Chunk (ChunkCoord _coord, World _world) {
+    public Chunk (ChunkCoord _coord, World _world, bool generateOnLoad) {
 
         coord = _coord;
         world = _world;
+        isActive = true;
+
+        if (generateOnLoad)
+            init();
+    } 
+
+    public void init()
+    {
         chunkObject = new GameObject();
         meshFilter = chunkObject.AddComponent<MeshFilter>();
         meshRenderer = chunkObject.AddComponent<MeshRenderer>();
@@ -44,7 +54,7 @@ public class Chunk
         createMeshData();
         createMesh();
 
-    } 
+    }
 
 
     /*
@@ -62,6 +72,7 @@ public class Chunk
             }
         }
 
+        isVoxelMapPopulated = true;
     }
 
 
@@ -88,8 +99,13 @@ public class Chunk
     */
     public bool isActive 
     {
-        get { return chunkObject.activeSelf; }
-        set { chunkObject.SetActive(value); }
+        get { return _isActive; }
+
+        set { 
+            _isActive = true;
+            if (chunkObject != null)
+                chunkObject.SetActive(value); 
+        }
     }
 
 
@@ -126,11 +142,22 @@ public class Chunk
 
         // Verificar se o voxel está dentro dos limites do chunk
         if (!IsVoxelInChunk(x, y, z))
-            return world.blockTypes[world.getVoxel(pos + position)].isSolid;
+            return world.checkForVoxel(pos + position);
 
         return world.blockTypes[VoxelMap[x, y, z]].isSolid;
     }
 
+    public byte getVoxelFromGlovalVector3(Vector3 pos)
+    {
+        int xCheck = Mathf.FloorToInt(pos.x);
+        int yCheck = Mathf.FloorToInt(pos.y);
+        int zCheck = Mathf.FloorToInt(pos.z);
+
+        xCheck -= Mathf.FloorToInt(chunkObject.transform.position.x);
+        zCheck -= Mathf.FloorToInt(chunkObject.transform.position.z);
+        
+        return VoxelMap[xCheck, yCheck, zCheck];
+    }
 
     /*
         Esta função adiciona os dados do voxel ás respetivas listas de dados que compoem um chunk.
@@ -219,10 +246,24 @@ public class ChunkCoord
     public int x;
     public int z;
 
+    public ChunkCoord () 
+    {
+        x = 0;
+        z = 0;
+    }
+
     public ChunkCoord (int _x, int _z) 
     {
         x = _x;
         z = _z;
+    }
+
+    public ChunkCoord (Vector3 pos) 
+    {
+        int xCheck = Mathf.FloorToInt(pos.x);
+        int zCheck = Mathf.FloorToInt(pos.z);
+        x = xCheck / VoxelData.chunkWidth;
+        z = zCheck / VoxelData.chunkWidth;
     }
 
     public bool Equals (ChunkCoord other)
